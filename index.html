@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+  <title>Big</title>
+  <link href='big.css' rel='stylesheet' type='text/css' />
+  <link href='styles/vs2015.css' rel='stylesheet' type='text/css' />
+  <style>
+    .new-shiny { background: #aaaaaa; }
+    :-webkit-full-screen {
+      width: 100%;
+      height: 100%;
+    }
+    .light {
+      background: #f8f8f8;
+      color: #4C5859;
+    }
+
+    .light em {
+      color: #26CC8F;
+    }
+
+    .light a {
+      color: #05A8AA;
+    }
+
+    .light a:hover {
+      color: #058A8C;
+    }
+
+    code {
+      padding: 20px 100px 30px 50px !important;
+      font-family: "hermit";
+    }
+
+    .inline-block {
+      display: inline-block;
+    }
+  </style>
+  <script>BIG_ASPECT_RATIO=1.6;</script>
+  <script src='big.js'></script>
+  <script src='highlight.pack.js'></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script>
+  // document.addEventListener('keydown', ({ key }) => {
+  //   if (key !== 'f') return
+  //
+  //   console.log('document.fullscreenEnabled', document.fullscreenEnabled)
+  //
+  //   if (document.fullscreenElement) {
+  //     document.exitFullscreen()
+  //   } else {
+  //     document.documentElement.requestFullscreen()
+  //   }
+  // })
+  </script>
+</head>
+<body id='body' class='light'>
+  <div><center><em>Practical&nbsp;Rust:</em><br/>API&nbsp;Ergonomics</center></div>
+  <div><em>Common</em> things you may expect out of <em>Rust</em></div>
+  <div>
+    1.&nbsp;<em>Polymorphism</em><br/>
+    2.&nbsp;<em>Inheritance</em><br/>
+    3.&nbsp;<em>Dynamic&nbsp;Typing</em><br/>
+    4.&nbsp;(and&nbsp;<em>extras</em>)
+  </div>
+  <div>How:<br/><em>Generics</em>&nbsp;&&nbsp;<em>Traits</em></div>
+  <div>
+    <em>Generics</em> is the topic of generalizing types and functionalities to broader cases.
+    <notes>Generics are abstract stand-ins for concrete types or other properties.</notes>
+  </div>
+  <div>
+    <em>Traits</em>: Defining Shared Behavior
+    <br/>
+    <br/>
+    <small><i>Traits are similar to a feature often called interfaces in other languages, although with some differences.</i></small>
+    <notes>
+      A trait tells the Rust compiler about functionality a particular type has and can share with other types. We can use traits to define shared behavior in an abstract way. We can use trait bounds to specify that a generic can be any type that has certain behavior.
+    </notes>
+  </div>
+  <div>
+    Generic parameters in Rust are always within angle brackets (&lt; &gt;).
+    <pre><code class="rust">
+MyStruct&lt;T&gt; {}
+//       ^
+
+a_function::&lt;String&gt;();
+//           ^
+
+impl&lt;T&gt; From&lt;T&gt; for T {}
+//   ^       ^
+    </code></pre>
+  </div>
+  <div>
+    <em>Trait bounds</em> on generic parameters.
+    <pre><code class="rust">
+fn name(arg: impl Trait) {}
+
+fn name&lt;T: Trait&gt;(arg: T) {}
+
+fn name&lt;T&gt;(arg: T) where T: Trait {}
+    </code></pre>
+  </div>
+  <div>
+    Rust's <em>Traits</em> are probably more flexible than you think.
+  </div>
+  <div>
+    A foreign <em>Trait</em> can be implemented any type you own.
+  </div>
+  <div>
+    1.&nbsp;<em>Polymorphism</em><br/>
+    2.&nbsp;Inheritance<br/>
+    3.&nbsp;Dynamic&nbsp;Typing<br/>
+    4.&nbsp;(and&nbsp;extras)
+  </div>
+  <div>
+    <div class="inline-block">
+      JavaScript polymorphism
+      <pre><code class="js">
+function do_polymorphic(a, b, c = true) {
+  if (b === undefined) {
+    b = something()
+  }
+  c = Boolean(c)
+  b = Boolean(b)
+  if (typeof a !== "number") { /* ... */ }
+  // ...
+}
+      </code></pre>
+    </div>
+    <div class="inline-block">
+      Simple C# polymorphism
+      <pre><code class="csharp">
+class Thingy {
+    void DoTwo(int a, bool c) {
+        DoThree(a, b, false);
+    }
+
+    void DoThree(int a, bool b, bool c) {
+        // ...
+    }
+}
+      </code></pre>
+    </div>
+    <notes>JavaScript polymorphism including type checking; Simple Java-style C# polymorphism without overriden abstract methods.</notes>
+  </div>
+  <div>
+    "But there's no polymorphism in Rust!"
+    <br/>
+    <br/>
+    <small>Well, yes, under the hood everything in Rust is monomorphized.</small>
+    <notes>That is, generics are flattened into every applicable variation. Largely an implementation detail related to LLVM assembly generation.</notes>
+  </div>
+  <div>
+    Conversion Traits
+    <pre><code class="rust">
+impl From&lt;OtherType&gt; for MyType {}
+
+impl Into&lt;OtherType&gt; for MyType {}
+    </code></pre>
+  </div>
+  <div>
+    Infalliable Conversion Traits
+    <pre><code class="rust">
+impl From&lt;OtherType&gt; for MyType {}
+
+impl Into&lt;OtherType&gt; for MyType {}
+    </code></pre>
+    Falliable Conversion Traits <i>(Returns Result&lt;T&gt;)</i>
+    <pre><code class="rust">
+impl TryFrom&lt;OtherType&gt; for MyType {}
+
+impl TryInto&lt;OtherType&gt; for MyType {}
+    </code></pre>
+  </div>
+  <div>
+    <pre><code class="rust">
+use std::convert::TryInto;
+use url::Url;
+
+// Generically accept any type which implements `TryInto&lt;Url&gt;`.
+fn get(url: impl TryInto&lt;Url&gt;) -> Result {
+    let url = url.try_into()?;
+    // ...
+}
+
+fn main() -> Result {
+    // All of these work!
+    get("https://example.org")?; // Static literal
+
+    let owned_resizable_string: String = "https://example.org".to_string();
+    get(&owned_resizable_string)?; // Borrowed
+
+    let url_struct: Url = "https://example.org".parse::&lt;Url&gt;()?;
+    get(url_struct)?;
+}
+    </code></pre>
+  </div>
+  <div>
+    <small>Note: <em>From</em>&nbsp;&&nbsp;<em>Into</em><br/>are also useful for general conversions, not just for polymorphism.</small>
+  </div>
+  <div>
+    1.&nbsp;Polymorphism<br/>
+    2.&nbsp;<em>Inheritance</em><br/>
+    3.&nbsp;Dynamic&nbsp;Typing<br/>
+    4.&nbsp;(and&nbsp;extras)
+  </div>
+  <div>
+    "But there's no inheritance in Rust!"
+    <br/>
+    <br/>
+    <small>Yes this one is also technically true. But, effectively the same thing is representable.</small>
+  </div>
+  <div>
+    <pre><code class="rust">
+struct WrapsString { // "super class"
+    inner: String, // "sub class"
+};
+
+struct WrapsString(String); // struct.0
+    </code></pre>
+  </div>
+  <div>
+    By-reference conversion traits.
+    <pre><code class="rust">
+impl AsRef&lt;OtherType&gt; for MyType {}
+
+impl AsMut&lt;OtherType&gt; for MyType {}
+    </code></pre>
+  </div>
+  <div>
+    <pre><code class="rust">
+struct WrapsString {
+    inner: String,
+}
+
+impl AsMut&lt;str&gt; for WrapsString {
+    fn as_mut(&mut self) -> &mut str {
+        &mut self.inner // Implicit return
+    }
+}
+    </code></pre>
+  </div>
+  <div>
+    <pre><code class="rust">
+struct WrapsString { inner: String }
+impl AsMut&lt;str&gt; for WrapsString {}
+
+fn modify_string(string: impl AsMut&lt;str&gt;) {
+    let string = string.as_mut();
+    // Mutate this string in-place in some way
+}
+
+fn main() {
+    let mut wrapper = WrapsString { inner: "banana".to_string() };
+    modify_string(&mut wrapper);
+}
+    </code></pre>
+    <notes>We can act on the wrapper as if it was a mutable reference to the inner type!</notes>
+  </div>
+  <div>
+    <pre><code class="rust">
+use http_types::{Response, StatusCode};
+
+let mut res = Response::new(StatusCode::Ok);
+res.insert_header("cats", "good");
+
+// left-hand type inference.
+let headers: Headers = res.as_ref();
+    </code></pre>
+  </div>
+  <div>
+    1.&nbsp;Polymorphism<br/>
+    2.&nbsp;Inheritance<br/>
+    3.&nbsp;<em>Dynamic&nbsp;Typing</em><br/>
+    4.&nbsp;(and extras)
+  </div>
+  <div>
+    "Wait what? Dynamic typing? In a strictly typed language?"
+    <br/>
+    <br/>
+    <small>Well, sort of, yes. You can store/access things behind a vtable (often called a "wide" or "fat" pointer).</small>
+  </div>
+  <div>
+    <pre><code class="rust">
+Box&lt;dyn SomeTrait&gt;;
+    </code></pre>
+  </div>
+  <div>
+    1.&nbsp;Polymorphism<br/>
+    2.&nbsp;Inheritance<br/>
+    3.&nbsp;Dynamic&nbsp;Typing<br/>
+    4.&nbsp;<em>Extension&nbsp;Traits</em>
+  </div>
+  <div>
+    Rust's <em>Traits</em> are probably more flexible than you think.
+    <br/>
+    <br/>
+    A foreign <em>Trait</em> can be implemented any type you own.
+  </div>
+  <div>
+    A local <em>Trait</em> can be implemented any foreign type!
+  </div>
+  <div>
+    Extension Traits
+    <pre><code class="rust">
+trait GetThird&lt;T&gt; {
+    fn get_third(&self) -> &amp;T;
+}
+
+impl&lt;T&gt; GetThird&lt;T&gt; for Vec&lt;T&gt; {
+  fn get_third(&self) -> Option&lt;&amp;T&gt; {
+      // 'self' here is a reference to a Vec
+      self.iter().nth(2)
+  }
+}
+
+fn main() {
+    let v = vec![1, 2, 3, 4, 5];
+    println!("{}", v.get_third().unwrap());
+}
+    </code></pre>
+  </div>
+  <div>
+    One last thing
+    <br/>
+    <br/>
+    <small>... there's another major api ergonomics tool for Rust</small>
+  </div>
+  <div>
+    <pre><code class="rust">macro_rules! //!!!</code></pre>
+    (and procedural macros)
+  </div>
+  <div>
+    1.&nbsp;Polymorphism<br/>
+    2.&nbsp;Inheritance<br/>
+    3.&nbsp;Dynamic&nbsp;Typing<br/>
+    4.&nbsp;Extension&nbsp;Traits<br/>
+    5.&nbsp;<em>Macros</em>
+  </div>
+  <div>
+    <pre><code class="rust">
+// A simple macro_rules! expansion
+preroll::main!("geolocality", setup_app_state, setup_routes);
+    </code></pre>
+  </div>
+  <div>
+    <pre><code class="rust">
+use geo_types::Coordinate;
+use serde::Deserialize;
+
+// An annotation-style procedural macro
+#[derive(Deserialize)]
+struct JsonInput {
+    waypoints: Vec&lt;Coordinate&lt;f64&gt;&gt;,
+}
+    </code></pre>
+  </div>
+  <div>
+    <pre><code class="rust">
+let EventHistory { event_history } = sqlx::query_as!(
+    EventHistory,
+    r#"
+    SELECT
+        json_agg(events.*) AS event_history
+    FROM events
+    WHERE
+        events.subject_id = $1
+    "#,
+    order_id
+)
+.fetch_one(conn.acquire().await?)
+.await?;
+    </code></pre>
+  </div>
+  <div>
+    <pre><code class="rust">
+// Nightly asm feature
+#![feature(asm)]
+
+fn main() {
+    let buf = "Hello from asm!\n";
+    let ret: i32;
+    unsafe {
+        asm!(
+            "syscall",
+            in("rax") 1, // syscall number
+            in("rdi") 1, // fd (stdout)
+            in("rsi") buf.as_ptr(),
+            in("rdx") buf.len(),
+            out("rcx") _, // clobbered by syscalls
+            out("r11") _, // clobbered by syscalls
+            lateout("rax") ret,
+        );
+    }
+    println!("write returned: {}", ret);
+}
+    </code></pre>
+  </div>
+  <div>
+    <pre><code class="rust">
+use inline_python::python;
+
+fn main() {
+    let who = "world";
+    let n = 5;
+    python! {
+        for i in range('n):
+            print(i, "Hello", 'who)
+        print("Goodbye")
+    }
+}
+    </code></pre>
+  </div>
+  <div>
+    <div><center><em>Practical&nbsp;Rust:</em><br/>API&nbsp;Ergonomics</center></div>
+    <br/>
+    1.&nbsp;Polymorphism<br/>
+    2.&nbsp;Inheritance<br/>
+    3.&nbsp;Dynamic&nbsp;Typing<br/>
+    4.&nbsp;Extension&nbsp;Traits<br/>
+    5.&nbsp;Macros
+  </div>
+</body>
+</html>
