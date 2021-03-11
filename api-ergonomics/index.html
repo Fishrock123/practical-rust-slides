@@ -34,9 +34,9 @@
       font-family: "hermit";
     }
 
-    .inline-block {
+    /* .inline-block {
       display: inline-block;
-    }
+    } */
   </style>
   <script>BIG_ASPECT_RATIO=1.6;</script>
   <script src='../big.js'></script>
@@ -57,30 +57,99 @@
   </script>
 </head>
 <body id='body' class='light'>
-  <div><center><em>Practical&nbsp;Rust:</em><br/>API&nbsp;Ergonomics</center></div>
-  <div><em>Common</em> things you may expect out of <em>Rust</em></div>
   <div>
+    <center><em>Practical&nbsp;Rust:</em> <br/>API&nbsp;Expectations</center>
+    <notes>You may have some expecations if you come to Rust from other programming languages.</notes>
+  </div>
+  <div>
+    You may <em>expect</em>:
+    <br/>
+    <br/>
     1.&nbsp;<em>Polymorphism</em><br/>
     2.&nbsp;<em>Inheritance</em><br/>
-    3.&nbsp;<em>Dynamic&nbsp;Typing</em><br/>
-    4.&nbsp;(and&nbsp;<em>extras</em>)
+    3.&nbsp;<em>Macros</em>
+    <notes>"Polymorphism" broadly covers a few common topics. "Macros" are a kind of metaprogramming.</notes>
   </div>
-  <div>How:<br/><em>Generics</em>&nbsp;&&nbsp;<em>Traits</em></div>
+  <div>
+    Wikipedia:
+    <br/>
+    <br/>
+    "<em>polymorphism</em> is the provision of a single interface to entities of different types"
+    <notes>From Wikipedia: In programming languages and type theory, polymorphism is the provision of a single interface to entities of different types or the use of a single symbol to represent multiple different types.</notes>
+  </div>
+  <div>
+    Kinds of <em>Polymorphism</em>
+    <br/>
+    <br/>
+    1. "Ad-hoc" polymorphism<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;<small>- <em>Argument overloads, variadic functions</em></small><br/>
+    2. Parametric polymorphism<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;<small>- <em>Generics</em></small><br/>
+    3. Subtyping / inclusion<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;<small>- <em>Interfaces, Traits</em></small>
+    <notes>We'll discuss Rust's Generics and Traits in more detail shortly</notes>
+  </div>
+  <div>
+    JavaScript function argument overloading ("ad-hoc" polymorphism)
+    <pre><code class="js">
+function do_polymorphic(a, b, c = true) {
+  if (b === undefined) {
+    b = something()
+  }
+  c = Boolean(c)
+  b = Boolean(b)
+  if (typeof a !== "number") { /* ... */ }
+  // ...
+}
+    </code></pre>
+    <notes>JavaScript variadic function including type checking.</notes>
+  </div>
+  <div>
+    Simple C# function overloading ("ad-hoc" polymorphism)
+    <pre><code class="csharp">
+class Thingy {
+    void DoTwo(int a, bool c) {
+        DoThree(a, b, false);
+    }
+
+    void DoThree(int a, bool b, bool c) {
+        // ...
+    }
+}
+    </code></pre>
+    <notes>Simple Java-style C# function overloading without abstract methods.</notes>
+  </div>
+  <div>
+    "But there's <em>no (ad-hoc) polymorphism</em> in Rust!"
+    <br/>
+    <br/>
+    <small>Well, yes, under the hood everything in Rust is monomorphized.</small>
+    <notes>Generics, are of course, parametric polymorphism. And the monomorphization means that generics are flattened into every applicable variation. Largely an implementation detail related to LLVM assembly generation.</notes>
+  </div>
+  <div>
+    In Rust <br/><em>Generics</em>&nbsp;&&nbsp;<em>Traits</em> are used in place of argument / function overloading.
+  </div>
   <div>
     <em>Generics</em> is the topic of generalizing types and functionalities to broader cases.
-    <notes>Generics are abstract stand-ins for concrete types or other properties.</notes>
+    <notes>That is; Generics are abstract stand-ins for concrete types or other properties.</notes>
   </div>
   <div>
-    <em>Traits</em>: Defining Shared Behavior
-    <br/>
-    <br/>
-    <small><i>Traits are similar to a feature often called interfaces in other languages, although with some differences.</i></small>
-    <notes>
-      A trait tells the Rust compiler about functionality a particular type has and can share with other types. We can use traits to define shared behavior in an abstract way. We can use trait bounds to specify that a generic can be any type that has certain behavior.
-    </notes>
+  <em>TypeScript generics</em> (parametric polymorphism) <em>&amp; constraints</em> (subtype)
+  <pre><code class="typescript">
+interface Lengthwise {
+  length: number;
+}
+
+function loggingIdentity&lt;T extends Lengthwise&gt;(arg: T): T {
+  //       generic param ^         ^ constraint
+
+  console.log(arg.length);
+  return arg;
+}
+    </code></pre>
   </div>
   <div>
-    Generic parameters in Rust are always within angle brackets (&lt; &gt;).
+    <em>Generic parameters</em> in Rust are always within angle brackets (&lt; &gt;).
     <pre><code class="rust">
 MyStruct&lt;T&gt; {}
 //       ^
@@ -93,71 +162,38 @@ impl&lt;T&gt; From&lt;T&gt; for T {}
     </code></pre>
   </div>
   <div>
-    <em>Trait bounds</em> on generic parameters.
+    <em>Traits</em>: Defining Shared Behavior in Generics
+    <br/>
+    <br/>
+    <small><i>Traits are similar to a feature often called interfaces in other languages, although with some differences.</i></small>
+    <notes>
+      This is subtype polymorphism
+      A trait tells the Rust compiler about functionality a particular type has and can share with other types. We can use traits to define shared behavior in an abstract way. We can use trait bounds to specify that a generic can be any type that has certain behavior.
+    </notes>
+  </div>
+  <div>
+    <em>Trait bounds</em> on generic parameters specify which types are applicable.
     <pre><code class="rust">
-fn name(arg: impl Trait) {}
+MyStruct&lt;T: Debug&gt; {}
+//          ^
 
-fn name&lt;T: Trait&gt;(arg: T) {}
+fn a_function&lt;T: FromStr&gt;();
+//               ^
 
-fn name&lt;T&gt;(arg: T) where T: Trait {}
+fn a_function(impl FromStr);
+// (same as above) ^
     </code></pre>
+    <notes>Similar to TypeScript or C# constraints</notes>
   </div>
   <div>
-    Rust's <em>Traits</em> are probably more flexible than you think.
-  </div>
-  <div>
-    A foreign <em>Trait</em> can be implemented any type you own.
-  </div>
-  <div>
-    1.&nbsp;<em>Polymorphism</em><br/>
-    2.&nbsp;Inheritance<br/>
-    3.&nbsp;Dynamic&nbsp;Typing<br/>
-    4.&nbsp;(and&nbsp;extras)
-  </div>
-  <div>
-    <div class="inline-block">
-      JavaScript polymorphism
-      <pre><code class="js">
-function do_polymorphic(a, b, c = true) {
-  if (b === undefined) {
-    b = something()
-  }
-  c = Boolean(c)
-  b = Boolean(b)
-  if (typeof a !== "number") { /* ... */ }
-  // ...
-}
-      </code></pre>
-    </div>
-    <div class="inline-block">
-      Simple C# polymorphism
-      <pre><code class="csharp">
-class Thingy {
-    void DoTwo(int a, bool c) {
-        DoThree(a, b, false);
-    }
-
-    void DoThree(int a, bool b, bool c) {
-        // ...
-    }
-}
-      </code></pre>
-    </div>
-    <notes>JavaScript polymorphism including type checking; Simple Java-style C# polymorphism without overriden abstract methods.</notes>
-  </div>
-  <div>
-    "But there's no polymorphism in Rust!"
-    <br/>
-    <br/>
-    <small>Well, yes, under the hood everything in Rust is monomorphized.</small>
-    <notes>That is, generics are flattened into every applicable variation. Largely an implementation detail related to LLVM assembly generation.</notes>
-  </div>
-  <div>
-    Conversion Traits
+    <em>Accepting conversions</em>: Rust's "function overloads"
     <pre><code class="rust">
-impl From&lt;OtherType&gt; for MyType {}
+use http_types::Request;
 
-impl Into&lt;OtherType&gt; for MyType {}
+fn accepts_request(req: impl Into&lt;Request&gt;) {
+    let req = req.into();
+    // ...
+}
     </code></pre>
   </div>
   <div>
@@ -167,6 +203,8 @@ impl From&lt;OtherType&gt; for MyType {}
 
 impl Into&lt;OtherType&gt; for MyType {}
     </code></pre>
+  </div>
+  <div>
     Falliable Conversion Traits <i>(Returns Result&lt;T&gt;)</i>
     <pre><code class="rust">
 impl TryFrom&lt;OtherType&gt; for MyType {}
@@ -201,25 +239,49 @@ fn main() -> Result {
     <small>Note: <em>From</em>&nbsp;&&nbsp;<em>Into</em><br/>are also useful for general conversions, not just for polymorphism.</small>
   </div>
   <div>
+    <pre><code class="rust">
+impl&lt;T, U&gt; Into&lt;U&gt; for T
+where
+    U: From&lt;T&gt;,
+{
+    fn into(self) -> U {
+        U::from(self)
+    }
+}
+
+
+impl&lt;T&gt; From&lt;T&gt; for T {
+    fn from(t: T) -> T {
+        t
+    }
+}
+    </code></pre>
+  </div>
+  <div>
     1.&nbsp;Polymorphism<br/>
     2.&nbsp;<em>Inheritance</em><br/>
-    3.&nbsp;Dynamic&nbsp;Typing<br/>
-    4.&nbsp;(and&nbsp;extras)
+    3.&nbsp;Macros
   </div>
   <div>
-    "But there's no inheritance in Rust!"
+    "But there's <em>no inheritance</em> in Rust!"
     <br/>
     <br/>
-    <small>Yes this one is also technically true. But, effectively the same thing is representable.</small>
+    <small>Yes this one is technically true. But, effectively the same thing is representable.</small>
   </div>
   <div>
+    Inner struct wrapping pattern
     <pre><code class="rust">
-struct WrapsString { // "super class"
-    inner: String, // "sub class"
-};
+// "sub class"
+struct WrapsString {
 
-struct WrapsString(String); // struct.0
+    // "super class"
+    // This is private by default.
+    inner: String,
+
+    pub other_field: u32,
+};
     </code></pre>
+    <notes>Inner could be 'pub', as in in publicly exposed, but we probably don't want that...</notes>
   </div>
   <div>
     By-reference conversion traits.
@@ -230,6 +292,7 @@ impl AsMut&lt;OtherType&gt; for MyType {}
     </code></pre>
   </div>
   <div>
+    By-reference mutable access to our 'inner' field.
     <pre><code class="rust">
 struct WrapsString {
     inner: String,
@@ -237,7 +300,8 @@ struct WrapsString {
 
 impl AsMut&lt;str&gt; for WrapsString {
     fn as_mut(&mut self) -> &mut str {
-        &mut self.inner // Implicit return
+        &mut self.inner
+        // Implicit return
     }
 }
     </code></pre>
@@ -260,90 +324,76 @@ fn main() {
     <notes>We can act on the wrapper as if it was a mutable reference to the inner type!</notes>
   </div>
   <div>
+    These conversions can be used outside of generic arguments too!
     <pre><code class="rust">
 use http_types::{Response, StatusCode};
 
 let mut res = Response::new(StatusCode::Ok);
 res.insert_header("cats", "good");
 
-// left-hand type inference.
+// Left-hand type inference.
+// "Down-casts" a reference to the inner headers structure.
 let headers: Headers = res.as_ref();
     </code></pre>
   </div>
   <div>
     1.&nbsp;Polymorphism<br/>
     2.&nbsp;Inheritance<br/>
-    3.&nbsp;<em>Dynamic&nbsp;Typing</em><br/>
-    4.&nbsp;(and extras)
+    3.&nbsp;<em>Macros</em>
   </div>
   <div>
-    "Wait what? Dynamic typing? In a strictly typed language?"
+    <em>Macros</em>: Metaprogramming
     <br/>
     <br/>
-    <small>Well, sort of, yes. You can store/access things behind a vtable (often called a "wide" or "fat" pointer).</small>
+    A way of writing code that writes other code.
+  </div>
+  <div>
+    Macros: <em>missing</em> from JavaScript, TypeScript, and C#.
+    <notes>Though, JS "Transpilers" themselves are kinda macro-like.</notes>
+  </div>
+  <div>
+    Rust macros are <em>not text substitution</em>!
+    <notes>C-style macros are like telling your code 'yeah just copy that from stackoverflow'. Rust macros return full checked valid rust code, and can be recursive!</notes>
+  </div>
+  <div>
+    Rust: <em>declarative & procedural</em> macros
+    <br/>
+    <br/>
+    1.&nbsp;Simple&nbsp;declarative&nbsp;macro&nbsp;expansion<br/>
+    2. Custom #[derive] macros<br/>
+    3. Attribute-like macros<br/>
+    4. Function-like macros
   </div>
   <div>
     <pre><code class="rust">
-Box&lt;dyn SomeTrait&gt;;
-    </code></pre>
-  </div>
-  <div>
-    1.&nbsp;Polymorphism<br/>
-    2.&nbsp;Inheritance<br/>
-    3.&nbsp;Dynamic&nbsp;Typing<br/>
-    4.&nbsp;<em>Extension&nbsp;Traits</em>
-  </div>
-  <div>
-    Rust's <em>Traits</em> are probably more flexible than you think.
-    <br/>
-    <br/>
-    A foreign <em>Trait</em> can be implemented any type you own.
-  </div>
-  <div>
-    A local <em>Trait</em> can be implemented any foreign type!
-  </div>
-  <div>
-    Extension Traits
-    <pre><code class="rust">
-trait GetThird&lt;T&gt; {
-    fn get_third(&self) -> &amp;T;
-}
-
-impl&lt;T&gt; GetThird&lt;T&gt; for Vec&lt;T&gt; {
-  fn get_third(&self) -> Option&lt;&amp;T&gt; {
-      // 'self' here is a reference to a Vec
-      self.iter().nth(2)
-  }
-}
-
-fn main() {
-    let v = vec![1, 2, 3, 4, 5];
-    println!("{}", v.get_third().unwrap());
-}
-    </code></pre>
-  </div>
-  <div>
-    One last thing
-    <br/>
-    <br/>
-    <small>... there's another major api ergonomics tool for Rust</small>
-  </div>
-  <div>
-    <pre><code class="rust">macro_rules! //!!!</code></pre>
-    (and procedural macros)
-  </div>
-  <div>
-    1.&nbsp;Polymorphism<br/>
-    2.&nbsp;Inheritance<br/>
-    3.&nbsp;Dynamic&nbsp;Typing<br/>
-    4.&nbsp;Extension&nbsp;Traits<br/>
-    5.&nbsp;<em>Macros</em>
-  </div>
-  <div>
-    <pre><code class="rust">
-// A simple macro_rules! expansion
+// A simple macro_rules! declarative expansion
 preroll::main!("geolocality", setup_app_state, setup_routes);
     </code></pre>
+  </div>
+  <div>
+    Macros? Hold on a second, you mentioned <em>variadic arguments</em> earlier but never covered them ...
+  </div>
+  <div>
+    Macros are Rust's classic answer to variadic arguents
+    <pre><code class="rust">
+let growable_array = vec![1, 2, 3, 4, 5];
+    </code></pre>
+  </div>
+  <div>
+    <pre><code class="rust">
+preroll::main!("geolocality", setup_app_state, setup_routes);
+
+#[macro_export]
+macro_rules! main {
+    ($service_name:tt, $routes_fns:tt) => {
+        $crate::main!($service_name, async { Ok(()) }, routes_fns);
+    };
+
+    ($service_name:tt, $state_setup:tt, $routes_fns:tt) => { };
+
+    ($service_name:tt, $state_setup:tt, $custom_setup:tt, $routes_fns:tt) => { };
+}
+</code></pre>
   </div>
   <div>
     <pre><code class="rust">
@@ -355,23 +405,6 @@ use serde::Deserialize;
 struct JsonInput {
     waypoints: Vec&lt;Coordinate&lt;f64&gt;&gt;,
 }
-    </code></pre>
-  </div>
-  <div>
-    <pre><code class="rust">
-let EventHistory { event_history } = sqlx::query_as!(
-    EventHistory,
-    r#"
-    SELECT
-        json_agg(events.*) AS event_history
-    FROM events
-    WHERE
-        events.subject_id = $1
-    "#,
-    order_id
-)
-.fetch_one(conn.acquire().await?)
-.await?;
     </code></pre>
   </div>
   <div>
@@ -399,6 +432,25 @@ fn main() {
     </code></pre>
   </div>
   <div>
+    vgtk
+    <pre><code class="rust">
+fn view(&self) -> VNode<Model> {
+  gtk! {
+      &lt;Application::new_unwrap(None, ApplicationFlags::empty())&gt;
+          &lt;Window border_width=20 on destroy=|_| Message::Exit&gt;
+              &lt;HeaderBar title="inc!" show_close_button=true /&gt;
+              &lt;Box spacing=10 halign=Align::Center&gt;
+                  &lt;Label label=self.counter.to_string() /&gt;
+                  &lt;Button label="inc!" image="add" always_show_image=true
+                          on clicked=|_| Message::Inc /&gt;
+              &lt;/Box&gt;
+          &lt;/Window&gt;
+      &lt;/Application&gt;
+  }
+}
+    </code></pre>
+  </div>
+  <div>
     <pre><code class="rust">
 use inline_python::python;
 
@@ -414,13 +466,29 @@ fn main() {
     </code></pre>
   </div>
   <div>
-    <div><center><em>Practical&nbsp;Rust:</em><br/>API&nbsp;Ergonomics</center></div>
+    Database-checked SQL queries!
+    <pre><code class="rust">
+let EventHistory { event_history } = sqlx::query_as!(
+    EventHistory,
+    r#"
+    SELECT
+        json_agg(events.*) AS event_history
+    FROM events
+    WHERE
+        events.subject_id = $1
+    "#,
+    order_id
+)
+.fetch_one(conn.acquire().await?)
+.await?;
+    </code></pre>
+  </div>
+  <div>
+    <div><center><em>Practical&nbsp;Rust:</em><br/>API&nbsp;Expectations</center></div>
     <br/>
     1.&nbsp;Polymorphism<br/>
     2.&nbsp;Inheritance<br/>
-    3.&nbsp;Dynamic&nbsp;Typing<br/>
-    4.&nbsp;Extension&nbsp;Traits<br/>
-    5.&nbsp;Macros
+    3.&nbsp;Macros
   </div>
 </body>
 </html>
