@@ -65,41 +65,41 @@
     Two forms of data absence:
     <br/>
     <br/>
-    -&nbsp;<em>Field does not exist</em><br/>
-    -&nbsp;<em>Function result was unexpected</em><br/>
+    -&nbsp;<em>Field&nbsp;does&nbsp;not&nbsp;exist</em><br/>
+    -&nbsp;<em>Function&nbsp;result&nbsp;was&nbsp;unexpected</em><br/>
     <notes></notes>
   </div>
   <div>
     "Field does not exist"
     <br/>
     <br/>
-    - Nullable references
-    - <em>Optional</em> types
+    -&nbsp;Nullable&nbsp;references
+    -&nbsp;<em>Optional</em>&nbsp;types
     <notes>In some languages this means that all references may be nullable, or that raw pointers may be nullable.</notes>
   </div>
   <div>
     "Function result was unexpected"
     <br/>
     <br/>
-    - Error behavior
-    - Exceptional control flow
-    - <em>Result</em> types
+    -&nbsp;Error&nbsp;behavior
+    -&nbsp;Exceptional&nbsp;control&nbsp;flow
+    -&nbsp;<em>Result</em>&nbsp;types
     <notes>Mostly C++ exceptional control flow</notes>
   </div>
   <div>
     Rust:
     <br/>
     <br/>
-    -&nbsp;Option&lt;T&gt;<br/>
-    -&nbsp;Result&lt;T,&nbsp;Err&gt;<br/>
+    -&nbsp;<em>Option&lt;T&gt;</em><br/>
+    -&nbsp;<em>Result&lt;T,&nbsp;Err&gt;</em><br/>
     <notes>These types are not magic! Rust enums</notes>
   </div>
   <div>
     Rust Enums
     <br/>
     <br/>
-    Value-Holding<br/>
-    Similar to <i>"Algebraic Data Types"</i>
+    <em>Value-Holding</em><br/>
+    Similar&nbsp;to&nbsp;<i>"Algebraic&nbsp;Data&nbsp;Types"</i>
     <notes>Can hold values for each different enum variation</notes>
   </div>
   <div>
@@ -161,10 +161,59 @@ pub enum Result&gt;T, E&lt; {
     </code></pre>
   </div>
   <div>
+    <pre><code class="rust">
+let a = Ok("a");
+
+a.is_ok(); // true
+a.is_err(); // false
+
+match a {
+    Ok(a) => a,
+    Err(error) => panic!("Oh No, error: {}", error),
+}
+    </code></pre>
+  </div>
+  <div>
+    <pre><code class="rust">
+fn parse_json(input: &str) -> serde_json::Value {
+    let result = serde_json::from_str(input);
+  
+    match result {
+      Ok(val) => val,
+      Err(error) => panic!("Oh No, serde_json error: {}", error),
+  }
+}
+    </code></pre>
+  </div>
+  <div>
+    <pre><code class="rust">
+use serde_json::{Value, Error};
+
+fn parse_json(input: &str) -> Result&lt;Value, Error&gt; {
+    let result = serde_json::from_str(input);
+  
+    result // implicit return
+}
+    </code></pre>
+  </div>
+  <div>
+    <pre><code class="rust">
+use serde_json::Value;
+
+fn parse_json(input: &str) -> eyre::Result&lt;Value&gt; {
+    let val = serde_json::from_str(input)?;
+    //                                ---^---
+    // Converts if an `Into&lt;ReturnErrorType&gt;` exists.
+
+    val // implicit return
+}
+    </code></pre>
+  </div>
+  <div>
     <div><center><em>Practical&nbsp;Rust:</em> <br/>Absence&nbsp;of&nbsp;Data</center></div>
     <br/>
-    -&nbsp;Option&lt;T&gt;<br/>
-    -&nbsp;Result&lt;T,&nbsp;Err&gt;<br/>
+    -&nbsp;<em>Option&lt;T&gt;</em><br/>
+    -&nbsp;<em>Result&lt;T,&nbsp;Err&gt;</em><br/>
   </div>
 </body>
 </html>
