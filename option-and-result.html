@@ -65,12 +65,12 @@
     Two forms of data absence:
     <br/>
     <br/>
-    -&nbsp;<em>Field&nbsp;does&nbsp;not&nbsp;exist</em><br/>
-    -&nbsp;<em>Function&nbsp;result&nbsp;was&nbsp;unexpected</em><br/>
+    -&nbsp;<em>Data&nbsp;does&nbsp;not&nbsp;exist</em><br/>
+    -&nbsp;<em>Processing&nbsp;result&nbsp;was&nbsp;unexpected</em><br/>
     <notes></notes>
   </div>
   <div>
-    "Field does not exist"
+    "Data does not exist"
     <br/>
     <br/>
     -&nbsp;Nullable&nbsp;references
@@ -78,7 +78,7 @@
     <notes>In some languages this means that all references may be nullable, or that raw pointers may be nullable.</notes>
   </div>
   <div>
-    "Function result was unexpected"
+    "Processing result was unexpected"
     <br/>
     <br/>
     -&nbsp;Error&nbsp;behavior
@@ -92,7 +92,7 @@
     <br/>
     -&nbsp;<em>Option&lt;T&gt;</em><br/>
     -&nbsp;<em>Result&lt;T,&nbsp;Err&gt;</em><br/>
-    <notes>These types are not magic! Rust enums</notes>
+    <notes>These types are not really magic! Rust enums</notes>
   </div>
   <div>
     Rust Enums
@@ -189,9 +189,11 @@ fn parse_json(input: &str) -> serde_json::Value {
     <pre><code class="rust">
 use serde_json::{Value, Error};
 
-fn parse_json(input: &str) -> Result&lt;Value, Error&gt; {
+fn parse_json(input: &str) -> Result&lt;Value, Error&gt; {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     let result = serde_json::from_str(input);
-  
+    //
+    //
+
     result // implicit return
 }
     </code></pre>
@@ -200,7 +202,7 @@ fn parse_json(input: &str) -> Result&lt;Value, Error&gt; {
     <pre><code class="rust">
 use serde_json::Value;
 
-fn parse_json(input: &str) -> eyre::Result&lt;Value&gt; {
+fn parse_json(input: &str) -> eyre::Result&lt;Value&gt; {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     let val = serde_json::from_str(input)?;
     //                                ---^---
     //
@@ -213,7 +215,7 @@ fn parse_json(input: &str) -> eyre::Result&lt;Value&gt; {
     <pre><code class="rust">
 use serde_json::Value;
 
-fn parse_json(input: &str) -> eyre::Result&lt;Value&gt; {
+fn parse_json(input: &str) -> eyre::Result&lt;Value&gt; {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     let val = serde_json::from_str(input)?;
     //                    ^           ---^---
     //                    | Result&lt;T, serde_json::Error&gt;
@@ -226,7 +228,7 @@ fn parse_json(input: &str) -> eyre::Result&lt;Value&gt; {
     <pre><code class="rust">
 use serde_json::Value;
 
-fn parse_json(input: &str) -> eyre::Result&lt;Value&gt; {
+fn parse_json(input: &str) -> eyre::Result&lt;Value&gt; {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     let val = serde_json::from_str(input)?;
     //                                ---^---
     // Converts if an `Into&lt;ReturnErrorType&gt;` exists.
@@ -234,6 +236,108 @@ fn parse_json(input: &str) -> eyre::Result&lt;Value&gt; {
     val // implicit return
 }
     </code></pre>
+  </div>
+  <div>
+    Cool,&nbsp;but&nbsp;this&nbsp;is&nbsp;a&nbsp;bit&nbsp;<em>verbose</em>.
+    <br/>
+    <br/>
+    What&nbsp;are&nbsp;the&nbsp;benefits?
+  </div>
+  <div>
+    <em>Benefits</em>&nbsp;of&nbsp;Option&lt;T&gt;
+    <br/>
+    <br/>
+    <ul>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+    <notes></notes>
+  </div>
+  <div>
+    <em>Benefits</em>&nbsp;of&nbsp;Option&lt;T&gt;
+    <br/>
+    <br/>
+    <ul>
+      <li>No null errors!</li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+    <notes></notes>
+  </div>
+  <div>
+    <em>Benefits</em>&nbsp;of&nbsp;Option&lt;T&gt;
+    <br/>
+    <br/>
+    <ul>
+      <li>No null errors!</li>
+      <li>Developer visibility</li>
+      <li></li>
+      <li></li>
+    </ul>
+    <notes></notes>
+  </div>
+  <div>
+    <em>Benefits</em>&nbsp;of&nbsp;Option&lt;T&gt;
+    <br/>
+    <br/>
+    <ul>
+      <li>No null errors!</li>
+      <li>Developer visibility</li>
+      <li>Explicit propagation</li>
+      <li></li>
+    </ul>
+    <notes></notes>
+  </div>
+  <div>
+    <em>Benefits</em>&nbsp;of&nbsp;Result&lt;T,&nbsp;Err&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <br/>
+    <br/>
+    <ul>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+    <notes></notes>
+  </div>
+  <div>
+    <em>Benefits</em>&nbsp;of&nbsp;Result&lt;T,&nbsp;Err&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <br/>
+    <br/>
+    <ul>
+      <li>Explicit propagation</li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+    <notes></notes>
+  </div>
+  <div>
+    <em>Benefits</em>&nbsp;of&nbsp;Result&lt;T,&nbsp;Err&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <br/>
+    <br/>
+    <ul>
+      <li>Explicit propagation</li>
+      <li>No out-of-band control flow</li>
+      <li></li>
+      <li></li>
+    </ul>
+    <notes></notes>
+  </div>
+  <div>
+    <em>Benefits</em>&nbsp;of&nbsp;Result&lt;T,&nbsp;Err&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <br/>
+    <br/>
+    <ul>
+      <li>Explicit propagation</li>
+      <li>No out-of-band control flow</li>
+      <li>Known typing at handlers</li>
+      <li></li>
+    </ul>
+    <notes></notes>
   </div>
   <div>
     <div><center><em>Practical&nbsp;Rust:</em> <br/>Absence&nbsp;of&nbsp;Data</center></div>
