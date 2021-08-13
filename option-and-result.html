@@ -203,6 +203,32 @@ use serde_json::Value;
 fn parse_json(input: &str) -> eyre::Result&lt;Value&gt; {
     let val = serde_json::from_str(input)?;
     //                                ---^---
+    //
+
+    val // implicit return
+}
+    </code></pre>
+  </div>
+  <div>
+    <pre><code class="rust">
+use serde_json::Value;
+
+fn parse_json(input: &str) -> eyre::Result&lt;Value&gt; {
+    let val = serde_json::from_str(input)?;
+    //                    ^           ---^---
+    //                    | Result&lt;T, serde_json::Error&gt;
+
+    val // implicit return
+}
+    </code></pre>
+  </div>
+  <div>
+    <pre><code class="rust">
+use serde_json::Value;
+
+fn parse_json(input: &str) -> eyre::Result&lt;Value&gt; {
+    let val = serde_json::from_str(input)?;
+    //                                ---^---
     // Converts if an `Into&lt;ReturnErrorType&gt;` exists.
 
     val // implicit return
