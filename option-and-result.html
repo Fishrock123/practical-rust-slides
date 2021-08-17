@@ -62,49 +62,56 @@
     <notes>Data absence is a continual challenge of interfacing with the real world.</notes>
   </div>
   <div>
-    Two forms of data absence:
+    Two forms of <em>data absence</em>:
     <br/>
     <br/>
-    -&nbsp;<em>Data&nbsp;does&nbsp;not&nbsp;exist</em><br/>
-    -&nbsp;<em>Processing&nbsp;result&nbsp;was&nbsp;unexpected</em><br/>
+    <ul>
+      <li>Data&nbsp;does&nbsp;not&nbsp;exist</li>
+      <li>Processing&nbsp;result&nbsp;was&nbsp;unexpected</em></li>
+    </ul>
     <notes></notes>
   </div>
   <div>
-    "Data does not exist"
+    "Data&nbsp;does&nbsp;not&nbsp;exist"
     <br/>
     <br/>
-    -&nbsp;Nullable&nbsp;references
-    -&nbsp;<em>Optional</em>&nbsp;types
+    <ul>
+      <li>Nullable&nbsp;references</li>
+      <li><em>Optional</em>&nbsp;types</li>
+    </ul>
     <notes>In some languages this means that all references may be nullable, or that raw pointers may be nullable.</notes>
   </div>
   <div>
-    "Processing result was unexpected"
+    "Processing&nbsp;result&nbsp;was&nbsp;unexpected"
     <br/>
     <br/>
-    -&nbsp;Error&nbsp;behavior
-    -&nbsp;Exceptional&nbsp;control&nbsp;flow
-    -&nbsp;<em>Result</em>&nbsp;types
-    <notes>Mostly C++ exceptional control flow</notes>
+    <ul>
+      <li>Error&nbsp;behavior</li>
+      <li>Exceptional&nbsp;control&nbsp;flow</li>
+      <li><em>Result</em>&nbsp;types</li>
+    </ul>
+    <notes>Mostly C++ -style exceptional control flow</notes>
   </div>
   <div>
     Rust:
     <br/>
     <br/>
-    -&nbsp;<em>Option&lt;T&gt;</em><br/>
-    -&nbsp;<em>Result&lt;T,&nbsp;Err&gt;</em><br/>
+    <li><em>Option&lt;T&gt;</em></li>
+    <li><em>Result&lt;T,&nbsp;Err&gt;</em></li>
     <notes>These types are not really magic! Rust enums</notes>
   </div>
   <div>
     Rust Enums
     <br/>
     <br/>
-    <em>Value-Holding</em><br/>
+    <em>Value-Holding</em>
+    <br/>
     Similar&nbsp;to&nbsp;<i>"Algebraic&nbsp;Data&nbsp;Types"</i>
     <notes>Can hold values for each different enum variation</notes>
   </div>
   <div>
     <pre><code class="rust">
-pub enum Option&gt;T&lt; {
+pub enum Option&lt;T&gt; {
     /// No value
     None,
     /// Some value of type `T`
@@ -116,7 +123,7 @@ pub enum Option&gt;T&lt; {
     <pre><code class="rust">
 let a = Some("a");
 
-a; // Option&gt;&str&lt;
+a; // Option&lt;&str&gt;
 
 a.unwrap(); // &str OR panic
     </code></pre>
@@ -151,7 +158,7 @@ a.is_none(); // false
   </div>
   <div>
     <pre><code class="rust">
-pub enum Result&gt;T, E&lt; {
+pub enum Result&lt;T, E&gt; {
     /// Contains the success value
     Ok(T),
 
@@ -340,10 +347,16 @@ fn parse_json(input: &str) -> eyre::Result&lt;Value&gt; {&nbsp;&nbsp;&nbsp;&nbsp
     <notes></notes>
   </div>
   <div>
+    Real world examples
+    <notes>Real internal examples of Option and Result to follow outside of slides</notes>
+  </div>
+  <div>
     <div><center><em>Practical&nbsp;Rust:</em> <br/>Absence&nbsp;of&nbsp;Data</center></div>
     <br/>
-    -&nbsp;<em>Option&lt;T&gt;</em><br/>
-    -&nbsp;<em>Result&lt;T,&nbsp;Err&gt;</em><br/>
+    <ul>
+      <li><em>Option&lt;T&gt;</em></li>
+      <li><em>Result&lt;T,&nbsp;Err&gt;</em></li>
+    </ul>
   </div>
 </body>
 </html>
