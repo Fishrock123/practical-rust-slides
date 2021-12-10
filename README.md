@@ -2,4 +2,4 @@
 
 slides for talks yeah
 
-https://fishrock123.github.io/practical-rust-slides/#0
+https://fishrock123.github.io/practical-rust-slides/api-expectations#0
