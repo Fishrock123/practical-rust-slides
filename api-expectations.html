@@ -36,7 +36,7 @@
 
     code {
       padding: 20px 100px 30px 50px !important;
-      font-family: "hermit";
+      font-family: "hermit", monospace;
     }
 
     /* .inline-block {
@@ -167,7 +167,7 @@ a_function::&lt;String&gt;();
 //           ^
 
 impl&lt;T&gt; From&lt;T&gt; for T {}
-//   ^       ^
+//   ^       ^      ^
     </code></pre>
   </div>
   <div>
@@ -189,11 +189,11 @@ impl&lt;T&gt; From&lt;T&gt; for T {}
 MyStruct&lt;T: Debug&gt; {}
 //          ^
 
-fn a_function&lt;T: FromStr&gt;();
+fn a_function&lt;T: FromStr&gt;(data);
 //               ^
 
-fn a_function(impl FromStr);
-// (same as above) ^
+fn a_function(data impl FromStr);
+//      (same as above) ^
     </code></pre>
     <notes>Similar to TypeScript or C# constraints</notes>
   </div>
