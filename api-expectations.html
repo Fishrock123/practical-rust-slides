@@ -350,6 +350,10 @@ let headers: Headers = res.as_ref();
     </code></pre>
   </div>
   <div>
+    Extending existing types with <em>"extension" traits</em>
+    <notes>Rust also has a unique concept of extending functionality via a local trait onto existing types.</notes>
+  </div>
+  <div>
     Extension traits
     <pre><code class="rust">
 use std::vec::Vec;
@@ -364,7 +368,6 @@ impl&lt;T&gt; NewFunctionality&lt;T&gt; for Vec&lt;T&gt; {
     }
 }
     </code></pre>
-    <notes>Rust also has a unique concept of extending functionality via a local trait onto existing types.</notes>
   </div>
   <div>
     1.&nbsp;Polymorphism<br />
