@@ -80,6 +80,9 @@
       <li><em>Optional</em>&nbsp;types</li>
     </ul>
     <notes>In some languages this means that all references may be nullable, or that raw pointers may be nullable.</notes>
+
+BILLION DOLLAR MISTAKE
+
   </div>
   <div>
     "Processing&nbsp;result&nbsp;was&nbsp;unexpected"
@@ -92,14 +95,20 @@
     </ul>
     <notes>Mostly C++ -style exceptional control flow</notes>
   </div>
+
+Rust: you must handle these things, "the compiler doesn't add complexity but the compiler ensures you handles these cases" - CJ
+
   <div>
     Rust:
     <br/>
     <br/>
     <li><em>Option&lt;T&gt;</em></li>
     <li><em>Result&lt;T,&nbsp;Err&gt;</em></li>
-    <notes>These types are not really magic! Rust enums</notes>
+    <notes>These types are not really magic! Rust enums EXCEPT THAT WEIRD NON IMPORT Some() None THING</notes>
   </div>
+
+briefly touch on generics
+
   <div>
     Rust Enums
     <br/>
@@ -143,7 +152,7 @@ match a {
     <pre><code class="rust">
 let a = Some("a");
 
-if let Some(a) {
+if let Some(a) = a {
     // Do something with `a`
 }
     </code></pre>
@@ -156,6 +165,9 @@ a.is_some(); // true
 a.is_none(); // false
     </code></pre>
   </div>
+  
+talk about option chaining here
+
   <div>
     <pre><code class="rust">
 pub enum Result&lt;T, E&gt; {
@@ -244,6 +256,9 @@ fn parse_json(input: &str) -> eyre::Result&lt;Value&gt; {&nbsp;&nbsp;&nbsp;&nbsp
 }
     </code></pre>
   </div>
+
+TRY OPERATOR SIMILAR TO JavaScript new ?
+
   <div>
     Cool,&nbsp;but&nbsp;this&nbsp;is&nbsp;a&nbsp;bit&nbsp;<em>verbose</em>.
     <br/>
