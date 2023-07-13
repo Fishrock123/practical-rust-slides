@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
+  <title>Big</title>
+  <link href='big.css' rel='stylesheet' type='text/css' />
+  <link href='styles/vs2015.css' rel='stylesheet' type='text/css' />
+  <style>
+    .new-shiny { background: #aaaaaa; }
+    :-webkit-full-screen {
+      width: 100%;
+      height: 100%;
+    }
+    .light {
+      background: #f8f8f8;
+      color: #4C5859;
+    }
+
+    .light em {
+      color: #26CC8F;
+    }
+
+    .light a {
+      color: #05A8AA;
+    }
+
+    .light a:hover {
+      color: #058A8C;
+    }
+
+    code {
+      padding: 20px 100px 30px 50px !important;
+      font-family: "hermit";
+    }
+
+    /* .inline-block {
+      display: inline-block;
+    } */
+  </style>
+  <script>BIG_ASPECT_RATIO=1.6;</script>
+  <script src='big.js'></script>
+  <script src='highlight.pack.js'></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script>
+  // document.addEventListener('keydown', ({ key }) => {
+  //   if (key !== 'f') return
+  //
+  //   console.log('document.fullscreenEnabled', document.fullscreenEnabled)
+  //
+  //   if (document.fullscreenElement) {
+  //     document.exitFullscreen()
+  //   } else {
+  //     document.documentElement.requestFullscreen()
+  //   }
+  // })
+  </script>
+</head>
+<body id='body' class='light'>
+  <div>
+    <center><em>(Im)practical&nbsp;Rust:</em> <br/>Never&nbsp;Type</center>
+    <notes>Rust's strong type system allows for some uncommon functionality.</notes>
+  </div>
+  <div>
+    Representing the impossible
+    <br/>
+    <notes>Code paths which cannot occur</notes>
+  </div>
+  <div>
+    <pre><code class="rust">
+fn main() -> Result&lt;(), Error&gt; {
+    loop {
+        // listen to network I/O for example
+        // only exits loop if there is an error
+    }
+
+    // Is unit the correct representation?
+    Ok(())
+}
+    </code></pre>
+  </div>
+  <div>
+    Unit&nbsp;Type:&nbsp;<code>()</code>
+    <br/>
+    <br/>
+    <ul>
+      <li><em>Exists at runtime</em></li>
+      <li>Has only one value</li>
+      <li><em>Represents absence of data</em></li>
+    </ul>
+    <notes>For example, functions without a return type implicitly return unit.</notes>
+  </div>
+  <div>
+    Never&nbsp;Type:&nbsp;<code>!</code>
+    <br/>
+    <br/>
+    <li><em>Only exists at compile time</em></li>
+    <li>Not representable in executable code</li>
+    <li><em>Represents impossibility</em></li>
+    <notes></notes>
+  </div>
+  <div>
+    Common&nbsp;execution&nbsp;impossibilities
+    <br/>
+    <br/>
+    <li><code>return</code></li>
+    <li><code>continue</code></li>
+    <li><code>break</code></li>
+    <notes>These keywords all exit execution to an outer scope, meaning code in the same scope following them can never execute, therefor they implicitly return never.</notes>
+  </div>
+  <div>
+    Representing the impossible (actually)
+    <br/>
+  </div>
+  <div>
+    <pre><code class="rust">
+fn main() -> Result&lt;!, Error&gt; {
+    loop {
+        // listen to network I/O for example
+        // only exits loop if there is an error
+    }
+}
+    </code></pre>
+  </div>
+  <div>
+    This is a nightly-only experimental API.
+    <br/>
+    <pre><code class="rust">
+#![feature(never_type)]
+let x: ! = {
+    return 123
+};
+</code></pre>
+  </div>
+  <div>
+    Already representable in today's Rust (sort of).
+  </div>
+  <div>
+    <code class="rust">
+      std::convert::Infallible
+    </code>
+    <br/>
+    <br/>
+    <pre><code class="rust">
+pub enum Infallible {}
+    </code></pre>
+  </div>
+  <div>
+    <pre><code class="rust">
+use std::convert::Infallible as Never;
+    </code></pre>
+  </div>
+</body>
+</html>
